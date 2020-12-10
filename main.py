@@ -3,22 +3,18 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import UnexpectedAlertPresentException
-import time
 
 
 
 url = 'http://ec2-54-208-152-154.compute-1.amazonaws.com/'
 
+
+
+# Options, disable headless mode here
 chrome_options = Options()
+chrome_options.add_argument('--headless')   # comment this line out to get browser GUI
 chrome_options.add_argument('--no-sandbox')
-# chrome_options.add_argument('--headless')   # comment this line out to get browser GUI
 chrome_options.add_argument('--disable-dev-shm-usage')
-
-driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
-driver.get(url)
-print(driver.title)
-print(driver.current_url)
-
 
 # static init stuff, game looks like this
 A = [0,1,2]
@@ -37,6 +33,11 @@ thirdrun_largerlist = []
 gameoutput = []
 
 
+
+# setup
+driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
+driver.get(url)
+print('Connecting to URL: ', driver.current_url)
 
 
 
@@ -99,7 +100,6 @@ def weighsecondround(val1, val2):
     leftbox = []
     box0 = driver.find_element_by_id("left_0")
     box0.send_keys(Keys.BACKSPACE)
-    print('sending',  val1[1])
     box0.send_keys(str(val1[1]))
     leftbox.append(val1[1])
     box0 = driver.find_element_by_id("left_1")
@@ -124,23 +124,21 @@ def weighsecondround(val1, val2):
     weigh = driver.find_element_by_id("weigh")
     weigh.click()
     result = driver.find_element_by_xpath("//div[contains(@class, 'game-info')]")
-    print('second time result: ,', str(result.text))
-
     multiline = result.text.split('\n')
-    print('value of secondrun multiline: ', multiline[2])
+
 
     if '>' in multiline[2]:
-        print('2rd run: left box greater than righter - boxleft value is: - ', leftbox)
+        #print('2rd run: left box greater than righter - boxleft value is: - ', leftbox)
         secondrun_largerlist.append(leftbox)  # val1 in boxleft is greater than val2
         secondrun_smallerlist.append(rightbox)  # val2 in boxright is less than val1
         return
     if '<' in multiline[2]:
-        print('2rd run: left box less than right box')
+        #print('2rd run: left box less than right box')
         secondrun_largerlist.append(rightbox)  # val2 in boxright is greater than val1
         secondrun_smallerlist.append(leftbox)  # val1 in boxleft is less than val2
         return
     if '=' in multiline[2]:
-        print('error - they are the same')
+        #print('error - they are the same')
         return
     return
 
@@ -150,18 +148,10 @@ def weighthirdround(val1, val2):
     # D = ('0', '1', '2',)
     # E = ('3', '4', '5',)
 
-    #clear = driver.find_element_by_id("reset") # doesnt work
-    # clear.click() # doesnt work
-    #print('weighj another one function val1 debug', val1, len(val1[0]))
-    #print('weighj another one function val2 debug', val2, len(val2[0]))
-
-   # print('val2,1, ', val2[1])
-
     # val1 goes to left top 3
     leftbox = []
     box0 = driver.find_element_by_id("left_0")
     box0.send_keys(Keys.BACKSPACE)
-    #print('sending',  val1[0][1])
     box0.send_keys(str(val1[0][1]))
     leftbox.append(val1[0][1])
     box0 = driver.find_element_by_id("left_1")
@@ -195,8 +185,6 @@ def weighthirdround(val1, val2):
     for entry in multiline:
         gameoutput.append(entry)
 
-    #print('value of thirdrun multiline: ', multiline[3], len(multiline))
-
     if '>' in multiline[3]:
         #print('3rd run: left box greater than righter - found > in output  - ', result.text)
         thirdrun_largerlist.append(leftbox) # val1 in boxleft is greater than val2
@@ -224,7 +212,6 @@ def set_bad_bar():
 
 
 def bar_select(number):
-    print('coin select input number is ', number, type(number))
     barname = 'coin_{0}'.format(number)
 
     try:
@@ -264,7 +251,8 @@ def debug_output():
     print('Output: thirdrun_smallerlist: ', thirdrun_smallerlist)
     print('Output: thirdrun_largerlist: ', thirdrun_largerlist)
     print('\n')
-    print('Found the following in Round-2 and Round-3 smaller-lists: ', finalchoice)
+    print('Final Decision: bar {0} is the fake gold bar'.format(finalchoice))
+    print('===============================')
 
 
 
@@ -273,33 +261,26 @@ def debug_output():
 
 # first run through
 weighfirstround()
-print('good: ', firstrun_goodlist, 'bad: ', firstrun_badlist)
-print('num of entries in badlist0', len(firstrun_badlist[0]))
 
-# what is going on here?
+# swap elements around to check unknown from 1st round suspect list
 secondrun_input_left.append(firstrun_badlist[0][0])
 secondrun_input_left.append(firstrun_badlist[0][1])
 secondrun_input_right.append(firstrun_badlist[0][2])
 secondrun_input_right.append(firstrun_goodlist[0][0])
 
-# info
-print('2 bad list: ', secondrun_input_left, secondrun_input_left[0], secondrun_input_left[1])
-print('2 good list: ', secondrun_input_right)
-
 # second run through, for some reason getting nested lists
 weighsecondround(secondrun_input_left, secondrun_input_right)
-
 
 # third round
 weighthirdround(secondrun_smallerlist, secondrun_largerlist)
 
-
 # compare 2nd run and 3rd run common entry in smaller-than output lists
 finalchoice = set_bad_bar()
 
-# click the bar num found in
+# click the bar num weighing as fake
 bar_select(finalchoice)
 
+# print info showing values
 debug_output()
 
 

@@ -10,6 +10,9 @@ Scenario:
 Objective: 
 - Determine and test which gold bar weighs less than the rest
 
+### easy-mode demo
+Visit my REPL.it instance to view a live demo in a working x11-vnc browser environment:
+This is my link](https://repl.it/@qcm/REPL-Selenium-Balance-Solver)
 
 
 

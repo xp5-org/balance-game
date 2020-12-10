@@ -12,7 +12,7 @@ Objective:
 
 ### easy-mode demo
 Visit my REPL.it instance to view a live demo in a working x11-vnc browser environment:  
-This is my link](https://repl.it/@qcm/REPL-Selenium-Balance-Solver)
+(https://repl.it/@qcm/REPL-Selenium-Balance-Solver)
 
 
 

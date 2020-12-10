@@ -9,6 +9,7 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--headless')
 chrome_options.add_argument('--disable-dev-shm-usage')
 driver.get("http://ec2-54-208-152-154.compute-1.amazonaws.com/")
 print(driver.title)

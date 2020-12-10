@@ -7,12 +7,15 @@ import time
 
 
 
+url = 'http://ec2-54-208-152-154.compute-1.amazonaws.com/'
+
 chrome_options = Options()
 chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--headless')   # comment this line out to get browser GUI
 chrome_options.add_argument('--disable-dev-shm-usage')
 
 driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
-driver.get("http://ec2-54-208-152-154.compute-1.amazonaws.com/")
+driver.get(url)
 print(driver.title)
 print(driver.current_url)
 
@@ -87,7 +90,7 @@ def weighfirstround():
     return result
 
 
-def weighanotherround(val1, val2):
+def weighsecondround(val1, val2):
     # find if val1 is less than or greater than val2
     # put val1 into smaller list if its smaller
 
@@ -237,15 +240,15 @@ def set_bad_bar():
             return str(element)
 
 
-def coin_select(number):
+def bar_select(number):
     print('coin select input number is ', number, type(number))
-    coinname = 'coin_{0}'.format(number)
-    coinpress = driver.find_element_by_id(coinname)
-    #coinpress = driver.find_element_by_id("coin_0")
+    barname = 'coin_{0}'.format(number)
+    barnpress = driver.find_element_by_id(barname)
+    #barnpress = driver.find_element_by_id("coin_0")
     try:
-        coinpress.click()
-        print('pressed coin 0, ', coinpress.text)
-        alert = coinpress.switch_to.alert
+        barnpress.click()
+        print('pressed coin 0, ', barnpress.text)
+        alert = barnpress.switch_to.alert
         print('alert text : ', alert.text)
         currentwindows = driver.window_handles
         print('inside the click function', currentwindows)
@@ -253,9 +256,27 @@ def coin_select(number):
         alert.dismiss()
         print('accepted alert - ', alert.text)
     except UnexpectedAlertPresentException as e:
-        print(e.__dict__["msg"])
+        outputmsg = e.__dict__["msg"]
+        print(outputmsg)
+        var = 'You find it'
+        if var in outputmsg:
+            print('bar_select: Success')
+        if var not in outputmsg:
+            print('bar_select: fail')
 
 
+def debug_output():
+    print('first run values:')
+    print('newtestlistD: ', secondrun_input_left)
+    print('newtestlistE: ', secondrun_input_right)
+    print('\n')
+    print('second run values:')
+    print('secondrun_smallerlist: ', secondrun_smallerlist)
+    print('secondrun_largerlist: ', secondrun_largerlist)
+    print('\n')
+    print('third run values:')
+    print('thirdrun_smallerlist: ', thirdrun_smallerlist)
+    print('thirdrun_largerlist: ', thirdrun_largerlist)
 
 
 
@@ -278,30 +299,18 @@ print('2 bad list: ', secondrun_input_left, secondrun_input_left[0], secondrun_i
 print('2 good list: ', secondrun_input_right)
 
 # second run through, for some reason getting nested lists
-weighanotherround(secondrun_input_left, secondrun_input_right)
-print('testlistF ', secondrun_smallerlist[0])
-print('testlistG ', secondrun_largerlist[0])
+weighsecondround(secondrun_input_left, secondrun_input_right)
+
 
 # third round
 weighthirdround(secondrun_smallerlist, secondrun_largerlist)
-print('third time round executed \n \n')
-
-print('first run values:')
-print('newtestlistD: ', secondrun_input_left)
-print('newtestlistE: ', secondrun_input_right)
-print('second run values:')
-print('secondrun_smallerlist: ', secondrun_smallerlist)
-print('secondrun_largerlist: ', secondrun_largerlist)
-print('third run values:')
-print('thirdrun_smallerlist: ', thirdrun_smallerlist)
-print('thirdrun_largerlist: ', thirdrun_largerlist)
 
 
+# compare 2nd run and 3rd run common entry in smaller-than output lists
 finalchoice = set_bad_bar()
-time.sleep(3)
 
-# click the coin
-coin_select(finalchoice)
+# click the bar num found in 
+bar_select(finalchoice)
 
 
 

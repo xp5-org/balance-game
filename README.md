@@ -1,3 +1,7 @@
+Balance Solve script
+=============
+
+
 ### Info
 Python3 Selenium test for 2x 3x3 balance-game grid
 
@@ -10,9 +14,13 @@ Scenario:
 Objective: 
 - Determine and test which gold bar weighs less than the rest
 
+### easy-mode demo
+Visit my REPL.it instance to view a live demo in a working x11-vnc browser environment:  
+(https://repl.it/@qcm/REPL-Selenium-Balance-Solver)
 
 
-
+Installing and Use : linux
+=============
 ### Requires
 
 apt packages:
